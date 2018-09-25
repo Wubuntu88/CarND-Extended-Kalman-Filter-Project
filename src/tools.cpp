@@ -34,6 +34,9 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
 
 MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   MatrixXd Hj(3,4);
+  Hj << 0,0,0,0,
+        0,0,0,0,
+        0,0,0,0;
   float px = x_state(0);
   float py = x_state(1);
   float vx = x_state(2);
@@ -44,8 +47,11 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   float c2 = sqrt(c1);
   float c3 = c1 * c2;
 
-  if(abs(c1) < 0.00001) {
-    cout << "divide by zero error.";
+  double threshold = 0.1; // if px or py are smaller than the threshold, this causes inaccurate update statements.
+  if(abs(px) < threshold || abs(py) < threshold) {
+    Hj << 0,0,0,0,
+          0,0,0,0,
+          0,0,0,0;
     return Hj;
   }
 
